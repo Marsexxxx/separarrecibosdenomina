@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Separador de Nóminas | RH</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: rgb(167, 169, 172);
+            background-image: url('fondo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* Ajustado para que el dashboard crezca sin cortarse */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .contenedor {
+            background: rgba(255, 255, 255, 0.95);
+            /* Ligeramente más opaco para leer mejor la tabla */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            max-width: 550px;
+            width: 100%;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(0, 143, 76);
+            margin-bottom: 5px;
+        }
+
+        p.subtitulo {
+            text-align: center;
+            color: rgb(99, 100, 102);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .grupo-archivo {
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: rgb(0, 0, 0);
+        }
+
+        input[type="file"] {
+            width: 95%;
+            padding: 10px;
+            border: 2px dashed rgb(167, 169, 172);
+            border-radius: 8px;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: rgb(0, 143, 76);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: rgb(126, 195, 74);
+        }
+
+        button:disabled {
+            background-color: rgb(167, 169, 172);
+            cursor: not-allowed;
+        }
+
+        #estado {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: rgb(0, 143, 76);
+            min-height: 20px;
+        }
+
+        /* Estilos de la barra de scroll de la tabla */
+        #listaEmpleados::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #listaEmpleados::-webkit-scrollbar-thumb {
+            background-color: rgb(167, 169, 172);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contenedor">
+        <h1>Separar Nóminas</h1>
+        <p class="subtitulo">Separar por PDF por supervisor</p>
+
+        <div class="grupo-archivo">
+            <label>📊 1. Carga Archivo CSV:</label>
+            <input type="file" id="csvInput" accept=".csv">
+        </div>
+
+        <div class="grupo-archivo">
+            <label>📄 2. Carga PDF de Recibos:</label>
+            <input type="file" id="pdfInput" accept=".pdf">
+        </div>
+
+        <button id="btnProcesar">Separar Recibos</button>
+
+        <div id="estado"></div>
+
+        <div id="dashboard" style="display: none; margin-top: 30px; width: 100%;">
+            <hr style="border: 1px solid rgb(167, 169, 172); margin-bottom: 20px;">
+            <h2 style="text-align: center; color: rgb(0, 143, 76); margin-top: 0;">Dashboard Operativo</h2>
+
+            <div style="width: 100%; max-width: 400px; margin: 0 auto 25px auto;">
+                <canvas id="graficaPastel"></canvas>
+            </div>
+
+            <input type="text" id="buscador" placeholder="🔍 Buscar por ID, Nombre o Supervisor..."
+                style="width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid rgb(126, 195, 74); border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none;">
+
+            <div style="max-height: 250px; overflow-y: auto; border: 1px solid rgb(167, 169, 172); border-radius: 8px; background: #fff;"
+                id="listaEmpleados">
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
